@@ -39,7 +39,7 @@
 
 #include "inc/LPC11xx.h"
 
-#include "PCD8544.h"
+#include "pcd8544.h"
 #include "config.h"
 
 #include "hdr/hdr_syscon.h"
