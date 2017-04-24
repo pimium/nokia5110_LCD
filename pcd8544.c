@@ -1,6 +1,6 @@
 /*
 * =====================================================================================
-*       Filename:  PCD8544.c
+*       Filename:  pcd8544.c
 *
 *    Description:  Driver to control the PCD8544 LCD display
 *
@@ -19,7 +19,7 @@
  * // hope it works for you
 * =====================================================================================
 */
-#include "PCD8544.h"
+#include "pcd8544.h"
 #include "inc/LPC11xx.h"
 
 void set_NOKIA_RES(void) { PCD8544_GPIO->DATA |= SRES; }

@@ -39,7 +39,8 @@
 
 #include "inc/LPC11xx.h"
 
-#include "PCD8544.h"
+#include "pcd8544.h"
+// #include "test.h"
 #include "config.h"
 
 #include "hdr/hdr_syscon.h"
@@ -82,31 +83,12 @@ int main(void) {
   system_init();                 // initialize other necessary elements
 
   init_PCD8544();
-  // LcdClear();
-
-  for (int i = 0; i < 6; ++i) {
-    gotoXY(1, i);
-    for (int j = 0; j < 17; ++j) {
-      LcdCharacter(' ');
-    }
-  }
 
   drawLine();
 
   while (1) {
 
-    // clear_NOKIA_RES();
-    // for (count = 0; count < count_max; count++)
-    //   ;
-    // LcdWrite(0, 0xE7);
-
-    // for (count = 0; count < count_max; count++)
-    //   ;
-    // LcdWrite(1, 0xF1);
-    // set_NOKIA_RES();
-    // init_PCD8544();
-
-    gotoXY(1, 1);
+    gotoXY(80, 4);
     LcdCharacter('H');
     LcdCharacter('E');
     LcdCharacter('L');
