@@ -66,6 +66,26 @@ static void system_init(void);
 | global functions
 +=============================================================================+
 */
+void TIMER32_0_IRQHandler(void) {
+
+  if (LPC_TMR32B0->IR & 0x1)
+  {
+    LPC_TMR32B0->IR |= 0x1;
+    LPC_GPIO0->DATA ^= (1 << 6); 
+  }
+
+  return;
+}
+
+void init_Timer(void) {
+  LPC_TMR32B0->MCR = 0x3; // enable the Timers interrupt and
+  LPC_TMR32B0->MR0 = 0x4020;
+  LPC_TMR32B0->IR = 0x1; 
+  LPC_TMR32B0->TCR = 0x02; //Reset Timer
+  LPC_TMR32B0->PR = 0x500; // Prescaler
+  LPC_TMR32B0->TCR = 0x01; //Enable timer                          
+  NVIC_EnableIRQ(TIMER_32_0_IRQn);
+}
 
 /*------------------------------------------------------------------------*/
 /**
@@ -83,6 +103,8 @@ int main(void) {
   system_init();                 // initialize other necessary elements
 
   init_PCD8544();
+  PCD8544_GPIO->DIR |= (1 << 6);
+  init_Timer();
 
   drawLine();
 
@@ -210,6 +232,7 @@ static uint32_t pll_start(uint32_t crystal, uint32_t frequency) {
 static void system_init(void) {
   LPC_SYSCON->SYSAHBCLKCTRL |=
       SYSAHBCLKCTRL_IOCON; // enable clock for IO configuration block
+  LPC_SYSCON->SYSAHBCLKCTRL |= SYSAHBCLKCTRL_CT32B0;                            
 }
 
 /*
