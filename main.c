@@ -66,23 +66,14 @@ static void system_init(void);
 | global functions
 +=============================================================================+
 */
-void TIMER32_0_IRQHandler(void) {
 
-  if (LPC_TMR32B0->IR & 0x1)
-  {
-    LPC_TMR32B0->IR |= 0x1;
-    LPC_GPIO0->DATA ^= (1 << 6); 
-  }
-
-  return;
-}
 
 void init_Timer(void) {
   LPC_TMR32B0->MCR = 0x3; // enable the Timers interrupt and
-  LPC_TMR32B0->MR0 = 0x4020;
+  LPC_TMR32B0->MR0 = 0x200;
   LPC_TMR32B0->IR = 0x1; 
   LPC_TMR32B0->TCR = 0x02; //Reset Timer
-  LPC_TMR32B0->PR = 0x500; // Prescaler
+  LPC_TMR32B0->PR = 0x1; // Prescaler
   LPC_TMR32B0->TCR = 0x01; //Enable timer                          
   NVIC_EnableIRQ(TIMER_32_0_IRQn);
 }
@@ -98,24 +89,35 @@ int main(void) {
   volatile uint32_t count, count_max = 0x10000; // with core frequency ~50MHz
                                                 // this gives ~1.5Hz blinking
                                                 // frequency
+  spi_state_function = stop_spi_transmission;
+  
 
   pll_start(CRYSTAL, FREQUENCY); // start the PLL
   system_init();                 // initialize other necessary elements
-
-  init_PCD8544();
-  PCD8544_GPIO->DIR |= (1 << 6);
+  PCD8544_GPIO->DIR |= (1 << 6);                                 
   init_Timer();
 
+  init_PCD8544();
+  
+  
   drawLine();
+  LcdCharacter('P');
+  LcdCharacter('Z');
+  LcdCharacter('x');
+  LcdCharacter('X');
+  LcdCharacter('W'); 
 
   while (1) {
-
-    gotoXY(80, 4);
-    LcdCharacter('H');
-    LcdCharacter('E');
-    LcdCharacter('L');
-    LcdCharacter('L');
-    LcdCharacter('o');
+    // fuctionn();
+    // for (count = 0; count < count_max; count++)
+    //   ;
+    // sck_high();
+    gotoXY(8, 1);
+    LcdCharacter('Y');
+    // LcdCharacter('E');
+    // LcdCharacter('L');
+    // LcdCharacter('L');
+    // LcdCharacter('o'); 
     for (count = 0; count < count_max; count++)
       ;
   }

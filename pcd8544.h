@@ -242,6 +242,16 @@ void LcdWrite(unsigned int dc, unsigned int data);
 void LcdCharacter(unsigned int character);
 void drawLine(void);
 
+uint8_t SPI_MasterTransmit(uint8_t cData);
+// States
+void sck_high(void);
+void sck_low(void);
+void start_spi_transmission(void);
+void stop_spi_transmission(void);
+
+// State pointer
+void (*spi_state_function)(void);
+
 void set_NOKIA_RES(void);
 void clear_NOKIA_RES(void);
 void set_NOKIA_CLK(void);
