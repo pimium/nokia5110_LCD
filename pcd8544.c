@@ -31,11 +31,10 @@ void TIMER32_0_IRQHandler(void) {
 
   if (LPC_TMR32B0->IR & 0x1)
   {
-    LPC_TMR32B0->IR |= 0x1;
-    // LPC_GPIO0->DATA ^= (1 << 6);
+    LPC_TMR32B0->TCR = 0x02; //Reset Timer
     spi_state_function();
-    // stop_spi_transmission();
-    // sck_high();
+    LPC_TMR32B0->IR |= 0x1;
+    LPC_TMR32B0->TCR = 0x01; //Enable timer 
   }
   return;
 }
@@ -74,6 +73,7 @@ void init_PCD8544(void) {
   LcdWrite(LCD_C, 0x20);
   LcdWrite(LCD_C, 0x0C);
 }
+
 // gotoXY routine to position cursor
 // x - range: 0 to 84
 // y - range: 0 to 5
@@ -84,7 +84,7 @@ void gotoXY(unsigned int x, unsigned int y) {
 }
 
 void LcdWrite(unsigned int dc, unsigned int data) {
-  int count_max = 10000;
+  int count_max = 100;
   while(transmitting)
     ;
   if (dc) {
@@ -92,30 +92,9 @@ void LcdWrite(unsigned int dc, unsigned int data) {
   } else
     clear_NOKIA_DnC();
 
-  // clear_NOKIA_CEN();
-  // clear_NOKIA_CLK();
-  // if ((data & 0x80) == 0x80) {
-  //   set_NOKIA_DIN();
-  // } else
-  //   clear_NOKIA_DIN();
-
-  // for (int i = 0; i < 8; ++i) {
-  //   for (int count = 0; count < count_max; count++)
-  //     ;
-  //   set_NOKIA_CLK();
-  //   for (int count = 0; count < count_max; count++)
-  //     ;
-  //   clear_NOKIA_CLK();
-  //   data = data << 1;
-  //   if ((data & 0x80) == 0x80) {
-  //     set_NOKIA_DIN();
-  //   } else
-  //     clear_NOKIA_DIN();
-  // }
-  // set_NOKIA_CEN();
-  // for (int count = 0; count < count_max; count++)
-  //   ;
   SPI_MasterTransmit(data);
+  for (int count = 0; count < count_max; count++)
+    ;
 }
 
 
@@ -175,9 +154,13 @@ uint8_t SPI_MasterTransmit(uint8_t cData) {
 
 void LcdCharacter(unsigned int character) {
   LcdWrite(LCD_D, 0x00);
-  for (int index = 0; index < 5; index++) {
-    LcdWrite(LCD_D, ASCII[character - 0x20][index]);
-  }
+  uint8_t *pt = ASCII[character - 0x20];
+  
+  LcdWrite(LCD_D, *(pt++));
+  LcdWrite(LCD_D, *(pt++));
+  LcdWrite(LCD_D, *(pt++));
+  LcdWrite(LCD_D, *(pt++));
+  LcdWrite(LCD_D, *(pt++));  
   LcdWrite(LCD_D, 0x00);
 }
 
@@ -203,5 +186,14 @@ void drawLine(void) {
   {
     gotoXY(0, j);
     LcdWrite(1, 0xff);
+  }
+}
+
+void LcdClear(void)
+{
+  LcdWrite(0, 0x80); // Column.
+  LcdWrite(0, 0x40); // Row.
+  for (int i = 0; i < 504; i++){
+    LcdWrite(1, 0x0);
   }
 }

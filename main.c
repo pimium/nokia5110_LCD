@@ -86,7 +86,7 @@ void init_Timer(void) {
 */ /*-------------------------------------------------------------------------*/
 
 int main(void) {
-  volatile uint32_t count, count_max = 0x10000; // with core frequency ~50MHz
+  volatile uint32_t count=0, count_max = 0x100000; // with core frequency ~50MHz
                                                 // this gives ~1.5Hz blinking
                                                 // frequency
   spi_state_function = stop_spi_transmission;
@@ -98,26 +98,33 @@ int main(void) {
   init_Timer();
 
   init_PCD8544();
-  
-  
-  drawLine();
-  LcdCharacter('P');
-  LcdCharacter('Z');
-  LcdCharacter('x');
-  LcdCharacter('X');
-  LcdCharacter('W'); 
+  for (count = 0; count < count_max; count++)
+    ;
+  LcdClear();
+  for (count = 0; count < count_max; count++)
+    ;
 
+  int line = 0;
   while (1) {
-    // fuctionn();
+    // LcdClear();
+    gotoXY(1, line);
+    // for (count = 0; count < 16; count++)
+    //   LcdWrite(1, 0x01);
+    for (int i = 0; i < 84; i++)
+      LcdWrite(1, 0x00);
     // for (count = 0; count < count_max; count++)
     //   ;
-    // sck_high();
-    gotoXY(8, 1);
-    LcdCharacter('Y');
-    // LcdCharacter('E');
-    // LcdCharacter('L');
-    // LcdCharacter('L');
-    // LcdCharacter('o'); 
+    gotoXY(1, line);
+    LcdCharacter('H');
+    LcdCharacter('E');
+    LcdCharacter('L');
+    LcdCharacter('L');
+    LcdCharacter('o'); 
+    LcdCharacter(' '); 
+    LcdCharacter('='); 
+    LcdCharacter(' '); 
+    LcdCharacter(0x30 + ((line++)%6) );
+    line = (line++)%6;
     for (count = 0; count < count_max; count++)
       ;
   }

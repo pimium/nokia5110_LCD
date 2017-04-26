@@ -241,6 +241,7 @@ void gotoXY(unsigned int x, unsigned int y);
 void LcdWrite(unsigned int dc, unsigned int data);
 void LcdCharacter(unsigned int character);
 void drawLine(void);
+void LcdClear(void);
 
 uint8_t SPI_MasterTransmit(uint8_t cData);
 // States
@@ -262,4 +263,5 @@ void set_NOKIA_DnC(void);
 void clear_NOKIA_DnC(void);
 void set_NOKIA_CEN(void);
 void clear_NOKIA_CEN(void);
+
 #endif /* PCD8544_H */
